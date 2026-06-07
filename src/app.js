@@ -1,4 +1,6 @@
 const express = require("express")
+const helpmodel = require("./modules/help.model")
+
 
 const app = express()
 
@@ -21,19 +23,28 @@ app.get("/nodes",(req,res)=>{
     })
 })
 //help post
-  app.post("/help",(req,res)=>{
-    help.push(req.body)
+  app.post("/help",async(req,res)=>{
+    const data = req.body
+    await helpmodel.create({
+        title:data.title,
+        description:data.description,
+        age:data.age,
+        dob:data.dob
+    })
+    
     res.status(201).json({
-        message :"valuuu aagyii he sserver pr "
+        message :"new help created "
     })
 })
 //help get
-const help=[]
 
-app.get("/help",(req,res)=>{
+
+app.get("/help",async (req,res)=>{
+
+    const help=await helpmodel.find()
    res.status(200).json({
-    message:"myyyyyyyyyyyy aagyaaaa",
-    help : help
+    message:"help fatched",
+    data:help
    })
     })
 
@@ -57,10 +68,13 @@ app.get("/help",(req,res)=>{
 
 //contact delete
 
-app.delete("/help/:index",(req,res)=>{
+app.delete("/help/:id",async(req,res)=>{
 
-    const index=req.params.index
-    delete help[index]
+    const id=req.params.id
+    await helpmodel.findOneAndDelete({
+        _id:id
+
+    })
     res.status(201).json({
         message:"help is deleted"
     })
@@ -68,13 +82,14 @@ app.delete("/help/:index",(req,res)=>{
 })
 
 //patch help
-app.patch("/help/:index",(req,res)=>{
-    const index=req.params.index
+app.patch("/help/:id",async(req,res)=>{
+    const id=req.params.id
     const description = req.body.description
+    await helpmodel.findOneAndUpdate({_id:id},{description:description})
 
-    help[index].description=description
     res.status(200).json({
         message:"help updated sucessfully"
+        
     })
 
 })

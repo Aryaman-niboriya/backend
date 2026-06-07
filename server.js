@@ -1,4 +1,12 @@
-const app = require("./app")
+const app = require("./src/app")
+const connectdb = require("./src/db/db")
+
+connectdb()
+
+
+
+
+
 
 
 
